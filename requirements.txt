@@ -1,0 +1,15 @@
+# Runtime dependencies for plv_pipeline.py
+#
+# Pins are expressed as lower bounds (>=) rather than exact versions so that
+# users can run against current CVE-patched wheels on their platform. The
+# unit tests in tests/test_plv_synthetic.py verify numerical correctness
+# against synthetic ground-truth and should be re-run after any upgrade.
+
+numpy>=1.23
+scipy>=1.10
+h5py>=3.7
+matplotlib>=3.6
+statsmodels>=0.14
+
+# Optional: test harness. Uncomment if you plan to run `pytest tests/`.
+# pytest>=7.0

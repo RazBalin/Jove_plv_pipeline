@@ -1,0 +1,85 @@
+cff-version: 1.2.0
+message: >-
+  If you use this software in a scientific publication, please cite both the
+  accompanying JoVE article and the primary methodological references listed
+  in the README (Lachaux et al. 1999; Vinck et al. 2010; Benjamini & Hochberg
+  1995).
+title: >-
+  plv_pipeline: Phase-Locking Value analysis of murine DMN electrophysiology
+authors:
+  - family-names: "B."
+    given-names: "Raz"
+    affiliation: "Neuroscience Center, University of Helsinki"
+  - family-names: "Castrén"
+    given-names: "Eero"
+    affiliation: "Neuroscience Center, University of Helsinki"
+version: "1.0.0"
+date-released: "2026-04-16"
+license: MIT
+repository-code: "https://github.com/RazBalin/Jove_plv_pipeline"
+keywords:
+  - phase-locking value
+  - PLV
+  - pairwise phase consistency
+  - PPC
+  - default mode network
+  - electrophysiology
+  - Neuropixels
+  - ECoG
+  - mouse
+  - corticosterone
+  - LSD
+references:
+  - type: article
+    authors:
+      - family-names: Lachaux
+        given-names: "Jean-Philippe"
+      - family-names: Rodriguez
+        given-names: "Eugenio"
+      - family-names: Martinerie
+        given-names: "Jacques"
+      - family-names: Varela
+        given-names: "Francisco J."
+    title: "Measuring phase synchrony in brain signals"
+    year: 1999
+    journal: "Human Brain Mapping"
+    volume: 8
+    issue: 4
+    start: 194
+    end: 208
+  - type: article
+    authors:
+      - family-names: Vinck
+        given-names: "Martin"
+      - family-names: "van Wingerden"
+        given-names: "Marijn"
+      - family-names: Womelsdorf
+        given-names: "Thilo"
+      - family-names: Fries
+        given-names: "Pascal"
+      - family-names: Pennartz
+        given-names: "Cyriel M.A."
+    title: >-
+      The pairwise phase consistency: a bias-free measure of rhythmic neuronal
+      synchronization
+    year: 2010
+    journal: "NeuroImage"
+    volume: 51
+    issue: 1
+    start: 112
+    end: 122
+  - type: article
+    authors:
+      - family-names: Benjamini
+        given-names: "Yoav"
+      - family-names: Hochberg
+        given-names: "Yosef"
+    title: >-
+      Controlling the false discovery rate: a practical and powerful approach
+      to multiple testing
+    year: 1995
+    journal: "Journal of the Royal Statistical Society, Series B"
+    volume: 57
+    issue: 1
+    start: 289
+    end: 300
