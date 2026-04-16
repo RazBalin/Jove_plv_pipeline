@@ -2,8 +2,7 @@
 
 A single-file,Python implementation of **Phase-Locking Value
 (PLV)** and **Pairwise Phase Consistency (PPC)** analysis for complex-wavelet
-LFP/ECoG recordings. Accompanies the JoVE manuscript on murine Default Mode
-Network electrophysiology in the corticosterone depression model (Castrén
+LFP/ECoG recordings. This program and repository is accompanying Journal of Visualized Experiments (JoVE) manuscript (Castrén
 Laboratory, University of Helsinki).
 
 ---
