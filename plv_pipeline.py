@@ -5,17 +5,15 @@ plv_pipeline.py
 ===============
 
 Phase-Locking Value (PLV) analysis pipeline for the murine Default Mode Network
-(DMN) electrophysiology dataset accompanying
+(DMN) electrophysiology protocol published as
 
-    Raz et al. "Electrophysiological characterisation of the murine Default Mode
-    Network across healthy, depression-model, and LSD-plasticity states".
-    Journal of Visualized Experiments (JoVE), in revision.
+    Kiiso T, Partanen P, Jacobs K, Varga B, Palva S, Palva M, Castrén E, Balin R
+    (2026). Surgical protocol for a large, resealable cranial window enabling
+    longitudinal, multi-modal electrophysiology recordings of mouse default mode
+    network. J Vis Exp (231): e70337. doi:10.3791/70337
 
-This script is the *exact* program used to produce the PLV connectivity matrices
-reported in the paper and supplementary figures. It is distributed as a
-stand-alone pipeline on purpose: reviewers asked for a single reproducible
-artefact, and keeping the published code minimal reduces the attack surface for
-post-publication critique.
+It is distributed as a single stand-alone file so that the analysis can be
+reproduced from one artifact.
 
 The pipeline computes two classes of output from complex Morlet-wavelet
 coefficient files (`*_raw-tfr-complex.h5`):
@@ -30,9 +28,7 @@ coefficient files (`*_raw-tfr-complex.h5`):
            independent-samples t-statistic matrix with Benjamini--Hochberg
            (BH, 1995) FDR correction on the off-diagonal edge family.
 
-No other analyses are implemented here. For wPLI, PAC, FOOOF, Granger, NBS,
-and graph-theoretic analyses please refer to the full Pipelines4/ repository
-cited in the paper.
+No other analyses are implemented here.
 
 Scientific conventions
 ----------------------
@@ -50,9 +46,8 @@ Scientific conventions
         PPC_{ij} = (T * PLV_{ij}^2 - 1) / (T - 1)
 
     PLV is biased upward ~ 1/sqrt(T); PPC removes the leading-order sample-size
-    bias. Both metrics are saved. Figures in the paper use PLV to match the
-    historical notation, but PPC is the recommended metric for quantitative
-    comparison across recordings of different length.
+    bias. Both metrics are saved; PPC is the recommended metric for
+    quantitative comparison across recordings of different length.
 
 *   Band integration. For each band we identify the subset of canonical
     wavelet frequencies in-band, compute one PLV matrix per frequency, and
@@ -61,9 +56,9 @@ Scientific conventions
     phase-locking, which is the standard practice in the literature).
 
 *   Edge buffer. We discard the first and last `edge_buffer_s` seconds of each
-    epoch to mitigate the wavelet cone-of-influence artefact. Default is 2 s,
+    epoch to mitigate the wavelet cone-of-influence artifact. Default is 2 s,
     consistent with the wavelet decomposition settings in the upstream
-    preprocessing (Bhatt et al., 2025, bioRxiv 10.1101/2025.11.13.688186v2).
+    preprocessing.
 
 *   Region aggregation. Multi-channel probes (Neuropixels ProbeA / ProbeB and
     the 4-node eCoG grid) are collapsed to anatomical regions by averaging
@@ -93,8 +88,7 @@ Usage
 
 Outputs are written to a ``Results/`` sub-folder next to this script. The
 pipeline is self-contained: configuration lives in the ``Config`` dataclass at
-the top of this file; no command-line flags are *required* (defaults are the
-ones used for the paper).
+the top of this file; no command-line flags are *required*.
 
 Dependencies
 ------------
@@ -104,10 +98,11 @@ Python 3.9+ tested on Ubuntu 22.04 and Windows 11.
 
 Author
 ------
-    Raz Bhatt, 2026 (PhD candidate, Castrén lab, University of Helsinki)
-    For questions: raz.bhatt@helsinki.fi (or open an issue on the repository).
+    Raz Balin, 2026 (Castrén lab, Neuroscience Center, HiLIFE, University of
+    Helsinki). For questions: raz.balin@helsinki.fi, or open an issue on the
+    repository.
 
-Licence
+License
 -------
     MIT (see LICENSE).
 """
@@ -161,7 +156,7 @@ class Config:
     """Start time (in seconds) of the analysis window inside each recording."""
 
     epoch_end_s: float = 120.0
-    """End time (in seconds); default is the full 2-minute artefact-free epoch."""
+    """End time (in seconds); default is the full 2-minute artifact-free epoch."""
 
     edge_buffer_s: float = 2.0
     """Seconds discarded at each end of the epoch to suppress wavelet COI."""
@@ -182,7 +177,7 @@ class Config:
     # --- Canonical frequency bands -----------------------------------------
     # Half-open convention: a frequency f belongs to band (lo, hi) if
     #     lo <= f <= hi.
-    # These match the bands in Pipelines4/ and the JoVE manuscript.
+    # These match the bands of the lab's full analysis pipeline.
     frequency_bands_hz: Dict[str, Tuple[float, float]] = field(default_factory=lambda: {
         "Delta":     (1.0,   4.0),
         "Theta":     (4.0,   8.0),
@@ -242,7 +237,7 @@ _GROUP_PATTERNS: Tuple[Tuple[str, str], ...] = (
 def identify_group(filename: str) -> str:
     """Return the canonical group label from a filename.
 
-    The filename is first normalised (lowercased; underscores / punctuation
+    The filename is first normalized (lowercased; underscores / punctuation
     collapsed to single spaces) so that cosmetic differences in the recording
     software's naming do not change the outcome. Returns ``"Unknown"`` if no
     pattern matches.
@@ -284,8 +279,8 @@ def identify_animal(filename: str) -> str:
 # ===========================================================================
 # These mappings assign each raw channel number to its anatomical region based
 # on the probe geometry and the histology-verified surface/column layout.
-# They are the *exact* mappings used in Pipelines4/ and the JoVE manuscript.
-# Each channel not found in a map is labelled "Unknown" and will be dropped
+# They are the *exact* mappings of the lab's full analysis pipeline.
+# Each channel not found in a map is labeled "Unknown" and will be dropped
 # from downstream PLV computation (so the matrices always use anatomical
 # region labels, never raw channel numbers).
 # ===========================================================================
@@ -404,7 +399,7 @@ def load_complex_tfr(filepath: str, cfg: Config) -> Optional[Dict[str, np.ndarra
     The HDF5 file must contain a dataset ``wavelet_complex`` of shape
     ``(n_channels, n_frequencies, n_timepoints)`` and dtype ``complex128``
     (or any compatible complex dtype). The canonical preprocessing pipeline
-    in Pipelines4/ always produces this layout.
+    of the lab's full pipeline always produces this layout.
 
     Returns a dict ``{region: 2-D complex array [n_freq, n_time], ...,
                       "freqs": 1-D array [n_freq]}``,
@@ -440,7 +435,7 @@ def load_complex_tfr(filepath: str, cfg: Config) -> Optional[Dict[str, np.ndarra
 
     # Collapse channels to regions by complex mean. Averaging BEFORE phase
     # extraction is the phase-preserving aggregation used throughout the
-    # project -- this matches the behaviour of Pipelines4/ load_complex_tfr.
+    # project; this matches the behavior of the full pipeline's loader.
     region_buckets: Dict[str, List[np.ndarray]] = defaultdict(list)
     for ch_idx in range(n_ch):
         region = region_map.get(f"Ch_{ch_idx}", "Unknown")
@@ -558,7 +553,7 @@ def compute_plv_matrix(region_dict: Dict[str, np.ndarray],
         return region_list, np.zeros((n_r, n_r), dtype=np.float32), \
                np.zeros((n_r, n_r), dtype=np.float32)
 
-    # 3. Vectorised PLV: the (i,j) entry is |<U_i, conj(U_j)>| / T.
+    # 3. Vectorized PLV: the (i,j) entry is |<U_i, conj(U_j)>| / T.
     #    U @ U.conj().T yields exactly this inner-product matrix.
     inner = (U @ U.conj().T) / T                     # complex (n_r, n_r)
     plv_mat = np.abs(inner).astype(np.float32)
@@ -581,7 +576,7 @@ def compute_plv_band_matrix(region_dict: Dict[str, np.ndarray],
 
     A separate PLV matrix is computed at each frequency index in
     ``freq_indices`` and the resulting matrices are averaged element-wise.
-    This is the standard "band-integrated PLV" operation used in the paper.
+    This is the standard "band-integrated PLV" operation.
 
     If no valid index is found (e.g. the caller asks for a band that does
     not intersect the available wavelet frequencies), we fall back to the
