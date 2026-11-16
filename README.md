@@ -5,6 +5,7 @@ A single-file Python implementation of **Phase-Locking Value (PLV)** and
 recordings. This repository accompanies the article in the *Journal of Visualized
 Experiments* (JoVE), Kiiso et al. (2026), [doi:10.3791/70337](https://doi.org/10.3791/70337)
 (Castrén Laboratory, University of Helsinki).
+Archived on Zenodo: [doi:10.5281/zenodo.24284280](https://doi.org/10.5281/zenodo.24284280) (all versions).
 
 ---
 
@@ -313,6 +314,8 @@ If you use this pipeline in an academic publication, please cite:
     57(1): 289–300.
 * **The article this pipeline accompanies**
   * Kiiso T, Partanen P, Jacobs K, Varga B, Palva S, Palva M, Castrén E, Balin R (2026). *Surgical protocol for a large, resealable cranial window enabling longitudinal, multi-modal electrophysiology recordings of mouse default mode network.* J Vis Exp (231): e70337. https://doi.org/10.3791/70337
+* **This software**
+  * Balin R, Castrén E (2026). *plv_pipeline: Phase-Locking Value analysis of murine DMN electrophysiology.* Zenodo. https://doi.org/10.5281/zenodo.24284280
 
 A machine-readable citation file (`CITATION.cff`) is included at the
 repository root so GitHub can render the "Cite this repository" button.
