@@ -14,8 +14,8 @@ authors:
   - family-names: "Castrén"
     given-names: "Eero"
     affiliation: "Neuroscience Center, University of Helsinki"
-version: "1.0.0"
-date-released: "2026-04-16"
+version: "1.0.1"
+date-released: "2026-11-16"
 license: MIT
 repository-code: "https://github.com/RazBalin/Jove_plv_pipeline"
 keywords:
