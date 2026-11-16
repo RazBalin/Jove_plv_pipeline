@@ -264,25 +264,7 @@ downstream plotting or statistical re-analysis.
 
 ---
 
-## 6. Reproducing the article's figure
-
-To reproduce **"Control group PLV after 21 days (α-band)"** from the JoVE
-paper, place every `rbNN_FPGA_BL-ctrl_raw-tfr-complex.h5` file in a folder
-and run:
-
-```bash
-python plv_pipeline.py --mode group \
-    --groups BL-ctrl MDD-ctrl \
-    --data-dir /path/to/BL_ctrl_and_MDD_ctrl_h5 \
-    --output-dir .
-```
-
-The file `Results/group/BL-ctrl_vs_MDD-ctrl_FPGA_Alpha_mean.png` is the
-panel in the article (restricted to the BL-ctrl arm).
-
----
-
-## 7. Correctness testing
+## 6. Correctness testing
 
 The file `tests/test_plv_synthetic.py` contains six tests:
 
@@ -315,7 +297,7 @@ merging changes.
 
 ---
 
-## 8. Method citation
+## 7. Method citation
 
 If you use this pipeline in an academic publication, please cite:
 
@@ -337,13 +319,13 @@ repository root so GitHub can render the "Cite this repository" button.
 
 ---
 
-## 9. License
+## 8. License
 
 Released under the MIT License. See `LICENSE`.
 
 ---
 
-## 10. Contact
+## 9. Contact
 
 Raz Balin, Castrén Laboratory, Neuroscience Center, University of Helsinki;
 co-corresponding author of the article. Questions about the code: open an
