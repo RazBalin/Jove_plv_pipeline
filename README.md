@@ -1,9 +1,10 @@
-# PLV pipeline — murine DMN electrophysiology
+# PLV pipeline: murine DMN electrophysiology
 
-A single-file,Python implementation of **Phase-Locking Value
-(PLV)** and **Pairwise Phase Consistency (PPC)** analysis for complex-wavelet
-LFP/ECoG recordings. This program and repository is accompanying Journal of Visualized Experiments (JoVE) manuscript (Castrén
-Laboratory, University of Helsinki).
+A single-file Python implementation of **Phase-Locking Value (PLV)** and
+**Pairwise Phase Consistency (PPC)** analysis for complex-wavelet LFP/ECoG
+recordings. This repository accompanies the article in the *Journal of Visualized
+Experiments* (JoVE), Kiiso et al. (2026), [doi:10.3791/70337](https://doi.org/10.3791/70337)
+(Castrén Laboratory, University of Helsinki).
 
 ---
 
@@ -17,7 +18,7 @@ Morlet-wavelet tensor to a region × region phase-synchrony matrix.
 
     PLV_ij = | mean_t( exp( i · (φ_i(t) − φ_j(t)) ) ) |
 
-where `φ_i(t)` is the instantaneous phase extracted from the unit-normalised
+where `φ_i(t)` is the instantaneous phase extracted from the unit-normalized
 complex wavelet coefficient. PLV is bounded in [0, 1].
 
 **Pairwise Phase Consistency** (Vinck et al. 2010):
@@ -28,7 +29,7 @@ PPC is an unbiased estimator of the squared population PLV; unlike PLV itself,
 its expectation under the null of independent phases is exactly zero, which
 removes the 1/√T positive bias that corrupts small-sample PLV comparisons.
 
-Internally, PLV is computed in one pass per region pair via the vectorised
+Internally, PLV is computed in one pass per region pair via the vectorized
 unit-phase outer product
 
     U_i(t) = exp( i · φ_i(t) )
@@ -47,7 +48,7 @@ coefficient.
 ### Statistical inference (group mode)
 
 For each ordered pair of groups *(A, B)* defined on the command line
-(e.g. `--groups BL MDD`), every off-diagonal edge is tested with an
+(e.g. `--groups BL BL-ctrl`), every off-diagonal edge is tested with an
 **independent-samples Welch t-test** (unequal variances, two-sided). The
 upper-triangle family of edge p-values is corrected for multiple comparisons
 using the Benjamini–Hochberg FDR procedure (Benjamini & Hochberg 1995) at
@@ -61,7 +62,7 @@ using the Benjamini–Hochberg FDR procedure (Benjamini & Hochberg 1995) at
 * **Default wavelet grid**: 35 log-spaced frequencies from ~3 to 240 Hz.
 * **Sampling rate**: 250 Hz (hard-assumed; the loader does not resample).
 * **Epoch**: 0–120 s by default, with a 2-s edge buffer on each side to
-  mitigate wavelet cone-of-influence artefacts. If a recording is shorter than
+  mitigate wavelet cone-of-influence artifacts. If a recording is shorter than
   `2 × edge_buffer`, the buffer is silently disabled and a warning printed.
 * **Regions**: 4-node eCoG DMN (R-ACA, L-ACA, R-RSP, L-RSP), ProbeA
   hippocampal/thalamic/visual column, ProbeB mPFC column. The exact
@@ -82,7 +83,7 @@ using the Benjamini–Hochberg FDR procedure (Benjamini & Hochberg 1995) at
 
 ```bash
 git clone https://github.com/RazBalin/Jove_plv_pipeline.git
-cd plv_pipeline
+cd Jove_plv_pipeline
 
 python -m venv .venv
 source .venv/bin/activate            # Windows: .venv\Scripts\activate
@@ -132,16 +133,17 @@ condition, following the Castrén lab filename convention:
 Examples:
 
 ```
-rb10_ProbeA_BL_raw-tfr-complex.h5         # Baseline, experiment group
-rb10_ProbeB_MDD-ctrl_raw-tfr-complex.h5   # Post-stress, control group
-rb12_FPGA_LSD_raw-tfr-complex.h5          # Post-LSD, experiment group
+rb10_ProbeA_BL_raw-tfr-complex.h5
+rb10_ProbeB_BL-ctrl_raw-tfr-complex.h5
+rb12_FPGA_BL_raw-tfr-complex.h5
 ```
 
 * `AnimalID` matches the regex `rb[a-z0-9]+`.
 * `Probe` is `ProbeA`, `ProbeB`, or `FPGA` (eCoG). The token `ecog` is
   accepted as a synonym of `FPGA`.
-* `Group` is one of `BL`, `MDD`, `LSD` (experiment) or their
-  `-ctrl` variants (control). See the group table in the main manuscript.
+* `Group` is one of the condition tokens the parser recognizes, each with a
+  `-ctrl` variant for the control group; the full list is `_GROUP_PATTERNS`
+  in `plv_pipeline.py`.
 
 Each file must contain a dataset named exactly `wavelet_complex` with shape
 `(n_channels, n_frequencies, n_timepoints)` and dtype `complex128` (or
@@ -169,7 +171,7 @@ with h5py.File("rb99_ProbeB_BL_raw-tfr-complex.h5", "w") as f:
 The pipeline is a single Python file with a unified command-line interface.
 Three modes of operation are supported.
 
-### Mode 1 — individual (per-subject)
+### Mode 1: individual (per-subject)
 
 Produces a region × region PLV (and PPC) matrix per subject, per file, per
 band. Use this when you want to inspect one animal at a time, or when you
@@ -181,7 +183,7 @@ python plv_pipeline.py --mode individual \
     --output-dir /path/to/Results
 ```
 
-### Mode 2 — group (between-group inference)
+### Mode 2: group (between-group inference)
 
 Loads all matching files in `--data-dir`, partitions them by the
 `Group/Timepoint` token in the filename, computes subject-level matrices, then
@@ -190,23 +192,13 @@ family. Exactly two group labels must be provided.
 
 ```bash
 python plv_pipeline.py --mode group \
-    --groups BL MDD \
+    --groups BL BL-ctrl \
     --data-dir /path/to/tfr_complex_files \
     --output-dir /path/to/Results \
     --fdr-alpha 0.05
 ```
 
-Typical group pairings that correspond to the scientific questions in the
-manuscript:
-
-| Question                        | Groups            |
-|---------------------------------|-------------------|
-| Stress effect (experiment arm)  | `BL MDD`          |
-| Stress-group baseline equivalence | `BL BL-ctrl`    |
-| LSD rescue (experiment arm)     | `MDD LSD`         |
-| LSD specificity                 | `LSD LSD-ctrl`    |
-
-### Mode 3 — interactive
+### Mode 3: interactive
 
 A minimal menu-driven wrapper for exploratory use on a single machine; not
 intended for batch / CI workflows.
@@ -232,7 +224,7 @@ python plv_pipeline.py --mode interactive
 
 All input / output paths are resolved relative to the current working
 directory unless absolute. The pipeline does not auto-discover files
-recursively: drop every HDF5 file you want analysed into the one flat
+recursively: drop every HDF5 file you want analyzed into the one flat
 `--data-dir`.
 
 ---
@@ -248,11 +240,11 @@ Results/
 │   ├── ... (one triplet per subject × band)
 │   └── individual_plv_summary.csv         # one row per subject × band × edge
 └── group/
-    ├── BL_vs_MDD_ProbeA_Alpha_mean.npz    # group-mean matrices
-    ├── BL_vs_MDD_ProbeA_Alpha_mean.png
-    ├── BL_vs_MDD_ProbeA_Alpha_tstat.npz
-    ├── BL_vs_MDD_ProbeA_Alpha_fdr.npz
-    ├── BL_vs_MDD_ProbeA_Alpha.png         # significance-masked heatmap
+    ├── BL_vs_BL-ctrl_ProbeA_Alpha_mean.npz    # group-mean matrices
+    ├── BL_vs_BL-ctrl_ProbeA_Alpha_mean.png
+    ├── BL_vs_BL-ctrl_ProbeA_Alpha_tstat.npz
+    ├── BL_vs_BL-ctrl_ProbeA_Alpha_fdr.npz
+    ├── BL_vs_BL-ctrl_ProbeA_Alpha.png         # significance-masked heatmap
     ├── group_comparison_summary.csv       # one row per probe × band × edge
     └── run_report.json                    # CLI args, version, timestamps
 ```
@@ -268,12 +260,11 @@ The `.npz` archives always contain:
 | `n_subjects`   | int          | (group mode only)                            |
 
 The tidy CSVs (one row per edge) are the recommended entry point for
-downstream plotting or statistical re-analysis, and are the format we
-recommend peer reviewers inspect.
+downstream plotting or statistical re-analysis.
 
 ---
 
-## 6. Reproducing the manuscript figure
+## 6. Reproducing the article's figure
 
 To reproduce **"Control group PLV after 21 days (α-band)"** from the JoVE
 paper, place every `rbNN_FPGA_BL-ctrl_raw-tfr-complex.h5` file in a folder
@@ -298,7 +289,7 @@ The file `tests/test_plv_synthetic.py` contains six tests:
 1. **Phase-locked pair → PLV ≈ 1.** Two 10 Hz oscillators with a fixed π/4
    phase offset must yield PLV > 0.9 in the alpha band.
 2. **Pure noise → PPC ≈ 0.** Two independent Gaussian noise signals must
-   yield PLV < 0.05 and |PPC| < 0.01 — this test specifically catches a
+   yield PLV < 0.05 and |PPC| < 0.01; this test specifically catches a
    missing bias correction.
 3. **HDF5 round-trip.** A synthetic 384-channel `wavelet_complex` dataset
    written to disk in the production layout must be recovered by
@@ -338,9 +329,8 @@ If you use this pipeline in an academic publication, please cite:
   * Benjamini Y, Hochberg Y (1995). *Controlling the false discovery rate: a
     practical and powerful approach to multiple testing.* J R Stat Soc B
     57(1): 289–300.
-* **The DMN electrophysiology study this pipeline accompanies**
-  * (Full JoVE citation to be inserted after acceptance.)
-  * https://www.biorxiv.org/content/10.1101/2025.11.13.688186v2
+* **The article this pipeline accompanies**
+  * Kiiso T, Partanen P, Jacobs K, Varga B, Palva S, Palva M, Castrén E, Balin R (2026). *Surgical protocol for a large, resealable cranial window enabling longitudinal, multi-modal electrophysiology recordings of mouse default mode network.* J Vis Exp (231): e70337. https://doi.org/10.3791/70337
 
 A machine-readable citation file (`CITATION.cff`) is included at the
 repository root so GitHub can render the "Cite this repository" button.
@@ -355,6 +345,6 @@ Released under the MIT License. See `LICENSE`.
 
 ## 10. Contact
 
-Raz B. — Castrén Laboratory, Neuroscience Center, University of Helsinki.
-Correspondence about this repository should be routed through the
-corresponding author of the JoVE manuscript.
+Raz Balin, Castrén Laboratory, Neuroscience Center, University of Helsinki;
+co-corresponding author of the article. Questions about the code: open an
+issue on this repository.
