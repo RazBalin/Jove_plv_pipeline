@@ -7,8 +7,9 @@ message: >-
 title: >-
   plv_pipeline: Phase-Locking Value analysis of murine DMN electrophysiology
 authors:
-  - family-names: "B."
+  - family-names: "Balin"
     given-names: "Raz"
+    orcid: "https://orcid.org/0000-0001-8895-1537"
     affiliation: "Neuroscience Center, University of Helsinki"
   - family-names: "Castrén"
     given-names: "Eero"
@@ -27,9 +28,34 @@ keywords:
   - Neuropixels
   - ECoG
   - mouse
-  - corticosterone
-  - LSD
 references:
+  - type: article
+    authors:
+      - family-names: Kiiso
+        given-names: "Tommi"
+      - family-names: Partanen
+        given-names: "Paula"
+      - family-names: Jacobs
+        given-names: "Keyrstin"
+      - family-names: Varga
+        given-names: "Bendegúz"
+      - family-names: Palva
+        given-names: "Satu"
+      - family-names: Palva
+        given-names: "Matias"
+      - family-names: "Castrén"
+        given-names: "Eero"
+      - family-names: Balin
+        given-names: "Raz"
+    title: >-
+      Surgical protocol for a large, resealable cranial window enabling
+      longitudinal, multi-modal electrophysiology recordings of mouse default
+      mode network
+    year: 2026
+    journal: "Journal of Visualized Experiments"
+    issue: 231
+    start: e70337
+    doi: "10.3791/70337"
   - type: article
     authors:
       - family-names: Lachaux
